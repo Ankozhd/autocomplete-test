@@ -55,10 +55,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     const debounceTimeout = setTimeout(async () => {
       if (inputValue?.length >= 3 && isUserInput && isValid) {
         setLoading(true);
-        const filteredOptions = await dataSource(inputValue);
-        setLoading(false);
-        setFilteredOptions(filteredOptions);
-        setIsDropdownVisible(true);
+        try {
+          const filteredOptions = await dataSource(inputValue);
+          setFilteredOptions(filteredOptions);
+          setIsDropdownVisible(true);
+        } catch (e) {
+          // here should be some nice error handling, maybe allow custom error message?
+          // but for now I will just set options to empty array
+          setFilteredOptions([]);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setFilteredOptions([]);
       }
